@@ -45,8 +45,8 @@ l = 1;
 Ego.x_prev = 0;
 Ego.y_prev = 0;
 d = 2; % safety boundary
-SafeBound_x = d*cos(theta) + x_obs;
-SafeBound_y = d*sin(theta) + y_obs;
+SafeBound_x = (r-x_obs)*cos(theta);
+SafeBound_y = r*sin(theta);
 figure(1)
 plot(SafeBound_x,SafeBound_y,'-')
 
@@ -68,8 +68,8 @@ delete(q4)
 delete(q5)
 delete(q6)
 V = [(Ego.x-Ego.x_prev)/dt, (Ego.y-Ego.y_prev)/dt];
-q1 = quiver(Ego.x, Ego.y, X(1), X(2),0, 'LineWidth', 2); % X vector
-q2 = quiver(Ego.x, Ego.y, V(1), V(2),0, 'LineWidth', 2); % V vector
+q1 = quiver(Ego.x, Ego.y, X(1), X(2),0); % X vector
+q2 = quiver(Ego.x, Ego.y, V(1), V(2),0); % V vector
 Ego.x_prev = Ego.x;
 Ego.y_prev = Ego.y;
 
@@ -81,11 +81,11 @@ u2 = 1/X_norm^2*(c*dot(X,V)-d)*X-c*V;
 a = 1/2*(dot(X,V)/(X_norm^2-d^2)+1/c/d);
 b = 1/2*(dot(X,V)/(X_norm^2-d^2)-1/c/d);
 
-q3 = quiver(x_obs, y_obs, d*u1(1), d*u1(2),0, 'LineWidth', 2); % u1
-q4 = quiver(x_obs, y_obs, d*u2(1), d*u2(2),0, 'LineWidth', 2); % u2
+q3 = quiver(x_obs, y_obs, d*u1(1), d*u1(2),0); % u1
+q4 = quiver(x_obs, y_obs, d*u2(1), d*u2(2),0); % u2
 
-q5 = quiver(Ego.x, Ego.y, X(1)+d*u1(1), X(2)+d*u1(2),0, 'LineWidth', 2); % r1
-q6 = quiver(Ego.x, Ego.y, X(1)+d*u2(1), X(2)+d*u2(2),0, 'LineWidth', 2); % r2
+q5 = quiver(Ego.x, Ego.y, X(1)+d*u1(1), X(2)+d*u1(2),0); % r1
+q6 = quiver(Ego.x, Ego.y, X(1)+d*u2(1), X(2)+d*u2(2),0); % r2
 
 drawnow
 
