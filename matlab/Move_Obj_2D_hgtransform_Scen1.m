@@ -29,16 +29,12 @@ global q4
 global q5
 global q6
 
-hold on
-axis equal
-xlim([-10 10])
-ylim([-5 20])
-grid on
 
 X_prev = [0, 0];
 %% Move the Ego
 % for fixed velocity and linear move  between pt1 and pt2, equation is
 % y = pt1 + x*(pt2-pt1)/T_tot)
+new_pos =[0 0 0];
 pt1 = [0 0 0];
 pt2 = [0 15 0];
 T_total = 10; % seconds
@@ -49,28 +45,31 @@ l = 1;
 Ego.x_prev = 0;
 Ego.y_prev = 0;
 d = 2; % safety boundary
+V_v = [0 1.5 0];
 
-
+hold on
+axis equal
+xlim([-10 10])
+ylim([-5 20])
+grid on
 
 for t=time
     
     % Move the object linearly
-    Ego.g.Matrix = makehgtform('translate',pt1 + t*(pt2-pt1)/T_total);
-    % Draw Tail
-    Ego.x = pt1(1)+t*(pt2(1)-pt1(1))/T_total;
-    Ego.y = pt1(2)+t*(pt2(2)-pt1(2))/T_total;
+%     Ego.g.Matrix = makehgtform('translate',pt1 + t*(pt2-pt1)/T_total);
+    new_pos = [V_v*dt + new_pos];
+    Ego.g.Matrix = makehgtform('translate',new_pos);    
+    Ego.x = new_pos(1);
+    Ego.y = new_pos(2);
     %% Collision Cone Vectors (stationary object)
     X = [x_obs-Ego.x y_obs-Ego.y];
     
-    V_v = [(Ego.x-Ego.x_prev)/dt, (Ego.y-Ego.y_prev)/dt];
     X_v = [Ego.x, Ego.y];
-    [a, b, collision] = CollisionConeDetect(X_v, X_obs, V_v, d, h);
+    [a, b, collision] = CollisionConeDetect(X_v, X_obs, V_v(1:2), d, h);
     t_go = t + norm((X_obs - X_v))/norm(V_v);
     % if(a>0 && b>0)
     % Ego.x = 40*(t-t_go)
     % end
-    Ego.x_prev = Ego.x;
-    Ego.y_prev = Ego.y;
     
     figure(2)
     subplot(2,2,1)
@@ -79,9 +78,6 @@ for t=time
     subplot(2,2,2)
     plot(t,b,'.', 'MarkerSize',3, 'MarkerEdgeColor', 'k')
     hold on
-    % subplot(2,2,4)
-    % plot(t,Ego.y,'.', 'MarkerSize',10, 'MarkerEdgeColor', 'r')
-    % hold on
 
 end
 
