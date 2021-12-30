@@ -19,15 +19,16 @@ delete(q4)
 delete(q5)
 delete(q6)
 
+
 figure(h)
 hold on
 plot(X_v(1), X_v(2),'.', 'MarkerSize',10, 'MarkerEdgeColor', 'k')
-q1 = quiver(X_v(1), X_v(2), X_rel(1), X_rel(2),0, 'LineWidth', 2); % X_rel vector
-q2 = quiver(X_v(1), X_v(2), V_v(1), V_v(2),0, 'LineWidth', 2); % V_v vector
-q3 = quiver(X_obs(1), X_obs(2), d*u1(1), d*u1(2),0, 'LineWidth', 2); % u1
-q4 = quiver(X_obs(1), X_obs(2), d*u2(1), d*u2(2),0, 'LineWidth', 2); % u2
-q5 = quiver(X_v(1), X_v(2), X_rel(1)+d*u1(1), X_rel(2)+d*u1(2),0, 'LineWidth', 2); % r1
-q6 = quiver(X_v(1), X_v(2), X_rel(1)+d*u2(1), X_rel(2)+d*u2(2),0, 'LineWidth', 2); % r2
+q1 = quiver(X_v(1), X_v(2), X_rel(1), X_rel(2),0, 'LineWidth', 2, 'color', 'm'); % X_rel vector
+q2 = quiver(X_v(1), X_v(2), V_v(1), V_v(2),0, 'LineWidth', 2, 'color', 'b'); % V_v vector
+q3 = quiver(X_obs(1), X_obs(2), d*u1(1), d*u1(2),0, 'LineWidth', 2, 'color', 'g'); % u1
+q4 = quiver(X_obs(1), X_obs(2), d*u2(1), d*u2(2),0, 'LineWidth', 2, 'color', 'g'); % u2
+q5 = quiver(X_v(1), X_v(2), X_rel(1)+d*u1(1), X_rel(2)+d*u1(2),0, 'LineWidth', 2, 'color', 'r'); % r1
+q6 = quiver(X_v(1), X_v(2), X_rel(1)+d*u2(1), X_rel(2)+d*u2(2),0, 'LineWidth', 2, 'color', 'r'); % r2
 plot(SafeBound_x,SafeBound_y,'-')
 
 hold off
