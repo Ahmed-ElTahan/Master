@@ -70,8 +70,8 @@ for t=time
     new_pos = [V_v*dt + new_pos];
     Ego.x = new_pos(1);
     Ego.y = new_pos(2);
-    X_rel = [x_obs-Ego.x y_obs-Ego.y z_obs-Ego.z];
     X_v = [Ego.x Ego.y Ego.z];
+    X_rel = X_obs - X_v;
 
     % If collision cone gives there is a collision and the normal distance
     % equal or less than d_avo
