@@ -13,7 +13,7 @@ patch('XData',Ego.x,'YData',Ego.y,'FaceColor','black','Parent',Ego.g) % Create t
 
 %% Objects
 % Object 1 (static)
-x_obs = 0.1; y_obs = 10; z_obs = 0;
+x_obs = 0.1; y_obs = 5; z_obs = 0;
 X_obs = [x_obs, y_obs z_obs];
 i = 1;
 Obj(i).r = 1;
@@ -29,6 +29,8 @@ global q3
 global q4
 global q5
 global q6
+global sb
+
 
 %% Move the Ego
 % for fixed velocity and linear move  between pt1 and pt2, equation is
@@ -44,7 +46,7 @@ N_pts = T_total * 10;
 dt = T_total/(N_pts-1);
 time = linspace(0,T_total,N_pts);
 l = 1;
-d = 3; % safety boundary
+d = 2; % safety boundary
 X_init = [0 0 0];
 X_target = [x_target y_target 0];
 hold all
@@ -52,6 +54,10 @@ plot(x_target, y_target, 'x', 'MarkerSize',40, 'MarkerEdgeColor', 'r')
 V_v = (X_target - X_init)/T_total;
 V_v_init = V_v;
 
+%% Move the Obstacle
+V_obs = [0, 0, 0];
+
+%% Initialization
 collision = 0;
 hold on
 axis equal
@@ -65,6 +71,7 @@ there_was_collision = 0;
 V_applied = [0 0 0];
 X_ap = [0 0 0];
 AP_reached = 0;
+EscP_reached = 0;
 for t=time
 
     new_pos = [V_v*dt + new_pos];
@@ -72,7 +79,9 @@ for t=time
     Ego.y = new_pos(2);
     X_v = [Ego.x Ego.y Ego.z];
     X_rel = X_obs - X_v;
-
+    
+    X_obs = [V_obs*dt + X_obs];
+    
     % If collision cone gives there is a collision and the normal distance
     % equal or less than d_avo
     if(collision == 1 && (norm(X_rel)-d<= d)) % Collision
@@ -103,6 +112,9 @@ for t=time
                 new_V_v = (X_target - X_v)/T_total; % calculate the required velocity to reach the target from the current position
                 angleCos = dot(V_applied/norm(V_applied), new_V_v/norm(new_V_v)); % calculate the angle between the unit vector of latest applied velocity and between unit vector of the needed targeted velocity
                 if(angleCos>0.99) % if they are very close, i.e. angle is almost 0
+                    EscP_reached = 1;
+                end
+                if(EscP_reached == 1)
                     new_V_v = (X_target - X_escap)/T_total; % use the target and the escape point to get the new needed velocity to go to the target
                     V_v = new_V_v; % set the V_v by the calculated velocity
                     V_v = V_v*norm(V_v_init)/norm(V_v); % apply the same magnitude of init velocity to current the velocity
@@ -117,9 +129,10 @@ for t=time
         end
     end
     Ego.g.Matrix = makehgtform('translate',new_pos);
-    
+    Obj(1).g.Matrix = makehgtform('translate',X_obs); % Move the object ahead the Ego
+
     %% Collision Cone Vectors (stationary object)    
-    [a, b, collision, r1, r2, u1, u2] = CollisionConeStaticDetect(X_v, X_obs, V_v, d, h);
+    [a, b, collision, r1, r2, u1, u2] = CollisionConeStaticDetect(X_v, X_obs, V_v, V_obs, d, h);
     t_go = t + norm((X_obs - X_v))/norm(V_v);
     figure(2)
     subplot(2,1,1)
